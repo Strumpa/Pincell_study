@@ -1,4 +1,4 @@
-function pii=mcgpii_dd(track,sigt,lmax,nmu,ielem)
+function pii=mcgpii(track,sigt,lmax,nmu,ielem)
 % compute the pii components for source isolation with the MOC.
 % P0/P1 linear/quadratic diamond differencing scheme.
 % function pii=mcgpii_dd(track,sigt,lmax,nmu,ielem)

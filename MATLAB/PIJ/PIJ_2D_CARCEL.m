@@ -1,3 +1,8 @@
+% Question 1, Pre-Doctoral Exam : 
+% Method of Collision Probabilities solution to 2D Pincell neutron flux.
+% Author : R. Guasch, combining and adapting scripts written by A. Hébert.
+% available at https://https://moodle.polymtl.ca/course/view.php?id=1233
+
 cote = sqrt(4.9) ; %cm
 nangle = 14 ; %number of angles
 ngauss = 4 ; %number of gauss quadrature points
