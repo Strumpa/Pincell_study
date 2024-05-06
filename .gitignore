@@ -2,7 +2,6 @@
 *.o
 *.a
 *.mod
-*.m
 *.ps
 *.dat
 *.txt
