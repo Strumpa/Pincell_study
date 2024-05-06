@@ -4,9 +4,11 @@
 * Two appoaches : given MOC and isotropic BC, use NXT TISO.
 
 MODULE 
-    GEO: MAC: NXT: MCCGT: ASM: FLU: GREP: ;
+    GEO: MAC: G2S: SALT: MCCGT: ASM: FLU: GREP: ;
 LINKED_LIST 
-    MACRO GEOM TRACK_N SYS FLUX EDITION ;
+    MACRO GEOM TRACK_S SYS FLUX EDITION ;
+SEQ_ASCII GEO_TDT ;
+SEQ_ASCII FIG_GEO.ps :: FILE './PIN_CELL.ps' ;
 SEQ_BINARY TF_EXC ;
 
 REAL V1 V2 V3 V4 V5 := 0.4 0.7 0.4 1.3 2.1 ;
@@ -32,33 +34,34 @@ MACRO := MAC: ::
 
 * Pincell geometry definition, 
 GEOM := GEO: :: CARCEL 4
-    X- REFL X+ REFL
-    Y- REFL Y+ REFL
+    X- ALBE 1.0 X+ ALBE 1.0
+    Y- ALBE 1.0 Y+ ALBE 1.0
     RADIUS 0.0 <<R1>> <<R2>> <<R3>> <<R4>>
     MIX 1 2 3 4 5 
     MESHX 0.0 <<pitch>> MESHY 0.0 <<pitch>>
 ;
 
-* Parameters and tracking with NXT:
+* Parameters and tracking with SALT:
 INTEGER an2d := 100 ;  ! ANGULAR QUADRATURE PARAMETER 100 
 REAL densur := 500.0 ; ! DENSITY OF INTEGRATION LINES CM^-1 500.0
 INTEGER nmu := 4 ; ! POLAR ANGLE QUADRATURE ORDER FOR MCCGT, test values 2, 3, 4.
 
 INTEGER mcu := 500 ; !  memory size allocation for MCCGT:
+GEO_TDT FIG_GEO.ps := G2S: GEOM :: EDIT 10 DRAWMIX DRAWNOD ;
 
-TRACK_N TF_EXC := NXT: GEOM ::
+TRACK_S TF_EXC := SALT: GEO_TDT ::
   EDIT 10
   TISO EQW <<an2d>> <<densur>> 
 ;
 
-TRACK_N := MCCGT: TRACK_N TF_EXC ::
+TRACK_S := MCCGT: TRACK_S TF_EXC ::
   EDIT 10
   LCMD <<nmu>> MCU <<mcu>> ! Using LCMD for Leonard McDaniel quadrature points and weights
 ;
 
-SYS := ASM: MACRO TRACK_N TF_EXC :: ARM EDIT 0 ; 
-FLUX := FLU: MACRO SYS TRACK_N TF_EXC :: 
+SYS := ASM: MACRO TRACK_S TF_EXC :: ARM EDIT 0 ; 
+FLUX := FLU: MACRO SYS TRACK_S TF_EXC :: 
         EDIT 1 TYPE K ;
 
 GREP: FLUX :: GETVAL 'K-EFFECTIVE' 1 1 1  >>Keff1<< ;
-ECHO "tracking = NXT, MOC solution Keff=" Keff1 ;
+ECHO "tracking = SALT, MOC solution Keff=" Keff1 ;
