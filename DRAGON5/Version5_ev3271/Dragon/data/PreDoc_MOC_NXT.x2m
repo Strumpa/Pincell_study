@@ -42,7 +42,7 @@ GEOM := GEO: :: CARCEL 4
 * Parameters and tracking with NXT:
 INTEGER an2d := 100 ;  ! ANGULAR QUADRATURE PARAMETER 100 
 REAL densur := 500.0 ; ! DENSITY OF INTEGRATION LINES CM^-1 500.0
-INTEGER nmu := 4 ; ! POLAR ANGLE QUADRATURE ORDER FOR MCCGT, test values 2, 3, 4.
+INTEGER nmu := 2 ; ! POLAR ANGLE QUADRATURE ORDER FOR MCCGT, test values 2, 3, 4.
 
 INTEGER mcu := 500 ; !  memory size allocation for MCCGT:
 
@@ -53,12 +53,12 @@ TRACK_N TF_EXC := NXT: GEOM ::
 
 TRACK_N := MCCGT: TRACK_N TF_EXC ::
   EDIT 10
-  LCMD <<nmu>> MCU <<mcu>> ! Using LCMD for Leonard McDaniel quadrature points and weights
+  LCMD <<nmu>> MCU <<mcu>> EPSI 1E-7 ! Using LCMD for Leonard McDaniel quadrature points and weights
 ;
 
-SYS := ASM: MACRO TRACK_N TF_EXC :: ARM EDIT 0 ; 
+SYS := ASM: MACRO TRACK_N TF_EXC :: ARM EDIT 10 ; 
 FLUX := FLU: MACRO SYS TRACK_N TF_EXC :: 
-        EDIT 1 TYPE K ;
+        EDIT 10 TYPE K ;
 
 GREP: FLUX :: GETVAL 'K-EFFECTIVE' 1 1 1  >>Keff1<< ;
 ECHO "tracking = NXT, MOC solution Keff=" Keff1 ;
