@@ -3,7 +3,10 @@
 % Author : R. Guasch, combining and adapting scripts written by A. Hébert.
 % available at https://https://moodle.polymtl.ca/course/view.php?id=1233
 
-cote = sqrt(4.9) ; %cm
+side = sqrt(4.9) ; %cm
+surfaces = [side, side, side, side] ;
+beta = 1 ; % albedo for isotropic boundary conditions.
+
 nangle = 14 ; %number of angles
 ngauss = 4 ; %number of gauss quadrature points
 Vol_i = [0.4, 0.7, 0.4, 1.3, 2.1] ; %2D volumes : cm^2
@@ -31,71 +34,113 @@ for i=2:size(Vol_i,2)-1
     radii(i) = sqrt(Vol_combined(i)/pi());
 end
 % 1) Generate tracking file :
-tracks = sybt2d(cote,radii,nangle,ngauss) ; % calling sybt2d to generate tracking file
+tracks = sybt2d(side,radii,nangle,ngauss) ; % calling sybt2d to generate tracking file
 % sybt2d.m retrieved from the ENE6101 moodle course page, presented in
 % Appendix A.4 of "Applied Reactor Physics" - A. Hébert.
 
 % 2) Compute the symmetric T matrix :
 Tij = tij_2d(tracks,sig_tot) ; % calling tij_2d to compute the T matrix for a finite 2D unstructured geometry.
-disp(size(Tij,2))
 % This might need to be revisited as Hebert mentions that cij_f, di_f, ei_f
 % were not written to deal with cross-sections approaching 0. but deal with
 % sig = 0, so might not need to change them.
 
 % 3) Normalize Tij using the Villarino-Stamm'ler method :
 T_tilde = sybrhl(tracks,sig_tot,Tij) ;
-disp(size(T_tilde,2))
-
 % 3) bis, extract collision, escape and transmission probabilities using 
 % Eq 3.339
 
-% Define the array of length 45
-
 % Initialize matrices
-P_SS = zeros(nsurf, nsurf);
-P_vS = zeros(nvol, nsurf);
-P_ij = zeros(nvol, nvol);
+% Transmission components
+t_ab = zeros(nsurf, nsurf);  % S_a*(P_SaSb) / 4, eq. 3.339
+P_SS = zeros(nsurf, nsurf); % = t_ab * 4/S_a, here S_a = side for all a since it's a square pincell.
 
-n_SS = (nsurf*nsurf - (nsurf-1)*nsurf/2) ;
-n_IJ = (nvol*nvol - (nvol-1)*nvol/2) ;
+% Entrance components
+t_ib = zeros(nvol, nsurf); % Vi*P_iSb, eq 3.339
+P_vS = zeros(nvol, nsurf); % = t_ib/Vi
+
+% collision components
+t_ij = zeros(nvol, nvol) ; % Vi*p_ij, eq 3.339 ! Reduced p_ij here !
+p_ij = zeros(nvol, nvol); % p_ij = t_ij/Vi
+
+
+% Compute some lengths and indices to facilitate extraction from T_ij
+% vector
+n_SS = (nsurf*nsurf - (nsurf-1)*nsurf/2) ; % number of t_ab terms calculated by tij_2d
+n_IJ = (nvol*nvol - (nvol-1)*nvol/2) ; % number of t_ij terms calculated by tij_2d
 n_IJ_start = size(T_tilde,2) - n_IJ + 1 ;
-n_VS_start = n_IJ + 1 ;
-disp("nSS=")
-disp(n_SS)
-disp("nVS start=")
-disp(n_VS_start)
-disp("nIJ=")
-disp(n_IJ)
-disp("nIJ start=")
-disp(n_IJ_start)
+n_VS_start = n_IJ + 1 ; % the rest is 
+
 % Store elements in P_SS upper diagonal including diagonal
 diag_indices_surf = eye(nsurf);
 upper_diag_indices_surf = triu(true(nsurf), 1);
-P_SS(diag_indices_surf | upper_diag_indices_surf) = T_tilde(1:n_SS);
+t_ab(diag_indices_surf | upper_diag_indices_surf) = T_tilde(1:n_SS) ;
+
+% extracting upper diagonal terms from Tij (normalized) vector
+P_SS(diag_indices_surf | upper_diag_indices_surf) = T_tilde(1:n_SS)*4/side ; 
+for i=2:nsurf
+    for j=1:(i-1)
+        P_SS(i,j) = P_SS(j,i) * surfaces(i) / surfaces(j) ; % calculating full transmission probbility matrix.
+    end
+end
+pss = sybpss(tracks, sig_tot) ;
 
 % Store elements in P_vS
-P_vS(:) = T_tilde(11:30);
+t_ib (:) = T_tilde(n_SS+1:n_IJ_start-1);
+%P_vS = t_ib/Vi
+for i=1:nvol
+    P_vS(i,:) = t_ib(i,:) / Vol_i(i) ;
+end
 
 % Store elements in P_ij upper diagonal including diagonal
 diag_indices_vol = eye(nvol);
 upper_diag_indices_vol = triu(true(nvol), 1);
-P_ij(diag_indices_vol | upper_diag_indices_vol) = T_tilde(n_IJ_start:end);
+t_ij(diag_indices_vol | upper_diag_indices_vol) = T_tilde(n_IJ_start:end);
+disp(t_ij)
+%p_ij = t_ij/Vi
+for i=1:nvol
+    p_ij(i,:) = t_ij(i,:) / Vol_i(i) ;
+end
+% use Vi*pij = Vj*pji !
+for i=2:nvol
+    for j = 1:(i-1)
+        p_ij(i,j) = p_ij(j,i)*(Vol_i(i)/Vol_i(j));
+    end
+end
 
 
 % 4) Compute the closed reduced collision probability matrix :
 % Use eq. 3.350 and 3.351
 
-%PSS_tilde = A*(I-PSS*A)^-1
-%Pvv_tilde = Pvv + PvS*PSS_tilde*PSv
+A = eye(nsurf)*beta ;
+I = eye(nsurf) ;
+PSS_tilde = A*inv(I-(P_SS/(side))*A) ; % eq 3.355
+% PSS_tilde = A/(I-P_SS*A) for optimized inverse
+
+% compute P_Sv : p_Si = P_Si/Sigma_i = (4V_i/S)*P_iS eq 3.317
+% try the stupid way : transpose P_Vs
+
+P_Sv = zeros(nsurf,nvol);
+for i=1:nsurf
+    for j=1:nvol
+        P_Sv(i,j) = (4*Vol_i(j))*P_vS(j,i);
+    end
+end
+for i=1:nvol
+    P_Sv(:,i) = P_Sv(:,i)*sig_tot(i);
+end
+
+Pvv_tilde = p_ij + P_vS*PSS_tilde*P_Sv ; % eq 3.354
 
 % 5) Compute the scattering reduced probability matrix W
 %W=(eye(size(pwb,1))-pwb*S0)^-1*pwb*Qfiss;
 
+W = (eye(nvol)-Pvv_tilde*S0)*Pvv_tilde*Qfiss ;
+
 % 6) Compute 
-%[iter,evect,eval] = al1eig(W,10^-8);
-%Keff1=eval;
-%disp("Keff1 = ");
-%disp(Keff1);
-tij=zeros(1,(5+4)*(5+4+1)/2)
+[iter,evect,eval] = al1eig(W,10^-8);
+Keff=eval;
+disp("Keff = ");
+disp(Keff);
+%tij=zeros(1,(5+4)*(5+4+1)/2)
 
 

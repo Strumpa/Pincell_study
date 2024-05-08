@@ -5,20 +5,13 @@ function tij=tij_2d(track,sigt)
 % (c) 2009 Alain Hebert, Ecole Polytechnique de Montreal
   indpos=@(i,j) max(i,j).*(max(i,j)-1)./2+min(i,j) ;
   nsurf=track(1) ; nreg=track(2) ; k=5+track(1)+track(2)+2*track(3) ;
-  disp("nreg = ");
-  disp(nreg)
-  disp("nsurf = ");
-  disp(nsurf)
+
   tij=zeros(1,(nreg+nsurf)*(nreg+nsurf+1)/2) ;
-  disp("size = ");
-  disp((nreg+nsurf)*(nreg+nsurf+1)/2) ;
-  disp("track(4)= ") ;
-  disp(track(4)) ;
+
   for itrk=1:track(4)
     isurf=track(k+2) ; jsurf=track(k+3) ; wei=track(k+4) ; km=track(k+5) ;
     kgar=k+5 ; k=k+5+km ; irs=isurf ; seg1=0. ; sig1=0. ;
-    disp("km = ");
-    disp(km);
+
     for ixi=1:km
       irt=irs ; irs=track(kgar+ixi) ; seg2=track(k+ixi) ; sig2=sigt(irs) ;
       irs=irs+nsurf ; iij=indpos(irs,irs) ;
