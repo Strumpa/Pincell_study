@@ -192,7 +192,6 @@ Pvv_tilde = p_ij + P_vS*PSS_tilde*P_Sv ; % eq 3.354
 
 
 % 5) Compute the scattering reduced probability matrix W
-%W=(eye(size(pwb,1))-pwb*S0)^-1*pwb*Qfiss;
 
 W = (eye(nvol)-Pvv_tilde*S0)*Pvv_tilde*Qfiss ;
 
@@ -201,4 +200,4 @@ W = (eye(nvol)-Pvv_tilde*S0)*Pvv_tilde*Qfiss ;
 Keff=eval;
 disp("Keff = ");
 disp(Keff);
-%tij=zeros(1,(5+4)*(5+4+1)/2)
+
