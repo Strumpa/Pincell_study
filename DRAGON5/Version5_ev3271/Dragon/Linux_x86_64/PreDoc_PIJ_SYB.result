@@ -36,11 +36,11 @@ MIX 1 2 3 4 5                                                                   
 MESHX 0.0 <<pitch>> MESHY 0.0 <<pitch>>                                                                                    0035
 ;                                                                                                                          0036
 * Parameters and tracking with SYBILT:                                                                                     0037
-INTEGER iqua2 := 24 ;                                                                                                      0038
-INTEGER nseg := 10 ;                                                                                                       0039
+INTEGER iqua2 := 32 ; ! test 7, 14, 28, 32, 64 causes seg fault, even with nseg = 1.                                       0038
+INTEGER nseg := 10    ; ! test 2, 4, 8, 10                                                                                 0039
 TRACK_S := SYBILT: GEOM ::                                                                                                 0040
-MAXR 50                                                                                                                    0041
-MAXZ 2000000                                                                                                               0042
+MAXR 200                                                                                                                   0041
+MAXZ 20000000                                                                                                              0042
 TITLE 'TRACKING FOR PINCELL'                                                                                               0043
 QUA2 <<iqua2>> <<nseg>> GAUS                                                                                               0044
 ;                                                                                                                          0045
@@ -106,7 +106,7 @@ QUIT .                                                                          
  IDF        0   (=0/2 BOUNDARY FLUXES FOR ADF ABSENT/PRESENT)
  NPART0     0   (NUMBER OF COMPANION PARTICLES)
 ->@END MODULE   : MAC:        
--->>MODULE MAC:        : TIME SPENT=        0.001 MEMORY USAGE= 0.000E+00
+-->>MODULE MAC:        : TIME SPENT=        0.000 MEMORY USAGE= 2.000E+03
 ->@BEGIN MODULE : GEO:        
 ->@DESCRIPTION  : Geometry definition                                                     
 ->@CREDITS      : A. Hebert                                                               
@@ -126,7 +126,7 @@ QUIT .                                                                          
 
 
  NUMBER OF CELLS ALONG THE X-AXIS =   1
-                 ALONG THE Y-AXIS =   1     AVAILABLE STORAGE MAXPTS =  50
+                 ALONG THE Y-AXIS =   1     AVAILABLE STORAGE MAXPTS = 200
  NUMBER OF MERGED VOLUMES =    5
  NUMBER OF DISTINCT PHYSICAL MIXTURES =    5
 
@@ -143,7 +143,7 @@ QUIT .                                                                          
  DP-0 APPROXIMATION AROUND EACH CARTESIAN CELL.
 
  QUADRATURE PARAMETERS:
- HETEROGENEOUS CELLS   -    ANGLES   NA = 24 IN (0,PI/4)
+ HETEROGENEOUS CELLS   -    ANGLES   NA = 32 IN (0,PI/4)
                           SEGMENTS   NX = 10
 
  HOMOGENEOUS CELLS     -    ANGLES   NH =  5
@@ -154,20 +154,20 @@ QUIT .                                                                          
 
  TOTAL NUMBER OF CELLS IN THE DOMAIN =      1
  TOTAL NUMBER OF MERGED CELLS =      1
- TOTAL NUMBER OF GENERATING CELLS =      1     AVAILABLE STORAGE MAXCEL =     50
+ TOTAL NUMBER OF GENERATING CELLS =      1     AVAILABLE STORAGE MAXCEL =    200
 
 
  TOTAL NUMBER OF DISTINCT OUT-CURRENTS =      4
- TOTAL NUMBER OF OUT-CURRENTS SURROUNDING ALL THE CELLS =      4     AVAILABLE STORAGE MAXJ =    200
+ TOTAL NUMBER OF OUT-CURRENTS SURROUNDING ALL THE CELLS =      4     AVAILABLE STORAGE MAXJ =    800
 
 
- SYBEUR: MAXIMUM STORAGE REQUIRED BY THE TRACKS =    3844 +  29332        AVAILABLE STORAGE MAXZ = 2000000
+ SYBEUR: MAXIMUM STORAGE REQUIRED BY THE TRACKS =    5124 +  39076        AVAILABLE STORAGE MAXZ =20000000
 
 
- SYBEUR: EXACT STORAGE REQUIRED BY THE TRACKS =   1404 INT +   9161 REAL        ACCURACY =  3.733E-06
+ SYBEUR: EXACT STORAGE REQUIRED BY THE TRACKS =   1870 INT +  12205 REAL        ACCURACY =  3.733E-06
 
 
- NUMBER OF VOLUMES =      5     AVAILABLE STORAGE MAXBLK =     50
+ NUMBER OF VOLUMES =      5     AVAILABLE STORAGE MAXBLK =    200
 
 
  STATE VECTOR:
@@ -177,20 +177,20 @@ QUIT .                                                                          
  NBMIX       5   (MAXIMUM NUMBER OF MIXTURES USED)
  NSURF       0   (NUMBER OF OUTER SURFACES)
  ITG         4   (TYPE OF GEOMETRY)
- MAXZ  2000000   (TRACKING LENGTH)
- MAXJ      200   (INTERNAL STORAGE LENGTH FOR CURRENTS)
+ MAXZ 20000000   (TRACKING LENGTH)
+ MAXJ      800   (INTERNAL STORAGE LENGTH FOR CURRENTS)
  NUNCUR      4   (NUMBER OF ADDITIONAL INTERFACE CURRENT COMPONENTS)
  IBIHET      0   (0/1=DOUBLE HETEROGENEITY IS NOT/IS ACTIVE)
  EPSJ   5.00E-06 (FLUX-CURRENT ITERATION EPSILON)
 ->@END MODULE   : SYBILT:     
--->>MODULE SYBILT:     : TIME SPENT=        0.001 MEMORY USAGE= 1.848E+03
+-->>MODULE SYBILT:     : TIME SPENT=        0.000 MEMORY USAGE= 1.736E+03
 ->@BEGIN MODULE : ASM:        
 ->@DESCRIPTION  : To built system matrices (CP and IC)                                    
 ->@CREDITS      : A. Hebert, G. Marleau, R. Roy                                           
 ->@COPYRIGHTS   : ECOLE POLYTECHNIQUE DE MONTREAL  
                   GNU LESSER GENERAL PUBLIC LICENSE
 ->@END MODULE   : ASM:        
--->>MODULE ASM:        : TIME SPENT=        0.008 MEMORY USAGE= 0.000E+00
+-->>MODULE ASM:        : TIME SPENT=        0.003 MEMORY USAGE= 0.000E+00
 ->@BEGIN MODULE : FLU:        
 ->@DESCRIPTION  : Solve the flux equations                                                
 ->@CREDITS      : R. Roy, A. Hebert, G. Marleau                                           
@@ -225,19 +225,19 @@ QUIT .                                                                          
           IN(  2) FLX: PRC= 0.00E+00 TAR= 5.00E-05 IGDEB=            2 ACCE=     1.00000
  FLU2DR: NO LEAKAGE-> REBALANCING ON
  FLU2DR: CPU TIME=        0. INTERNAL CONVERGENCE       REACHED AFTER     2 ITERATIONS.
- OUT(  1) EIG: PRC= 3.75E-01 TAR= 1.00E-05 KEFF= 1.171623E+00 BUCK= 0.00000E+00
- OUT(  1) FLX:                             FNOR= 8.535167E-01 ACCE=     1.00000
+ OUT(  1) EIG: PRC= 3.75E-01 TAR= 1.00E-05 KEFF= 1.171624E+00 BUCK= 0.00000E+00
+ OUT(  1) FLX:                             FNOR= 8.535160E-01 ACCE=     1.00000
           IN(  1) FLX: PRC= 7.45E-08 TAR= 5.00E-05 IGDEB=            2 ACCE=     1.00000
  FLU2DR: NO LEAKAGE-> REBALANCING ON
  FLU2DR: CPU TIME=        0. INTERNAL CONVERGENCE       REACHED AFTER     1 ITERATIONS.
- OUT(  2) EIG: PRC= 9.57E-08 TAR= 1.00E-05 KEFF= 1.171623E+00 BUCK= 0.00000E+00
- OUT(  2) FLX: PRC= 7.45E-08 TAR= 5.00E-05 FNOR= 8.535167E-01 ACCE=     1.00000
+ OUT(  2) EIG: PRC= 1.07E-08 TAR= 1.00E-05 KEFF= 1.171624E+00 BUCK= 0.00000E+00
+ OUT(  2) FLX: PRC= 7.45E-08 TAR= 5.00E-05 FNOR= 8.535160E-01 ACCE=     1.00000
  FLU2DR: CPU TIME=        0. EXTERNAL CONVERGENCE       REACHED AFTER     2 ITERATIONS.
 
- ++ TRACKING CALLED=   3 TIMES FINAL KINF= 1.171623E+00 FINAL KEFF= 1.171623E+00 B2= 0.00000E+00 PRECISION= 9.57E-08
+ ++ TRACKING CALLED=   3 TIMES FINAL KINF= 1.171624E+00 FINAL KEFF= 1.171624E+00 B2= 0.00000E+00 PRECISION= 1.07E-08
  ++ TOTAL NUMBER OF FLUX CALCULATIONS=         3
 ->@END MODULE   : FLU:        
--->>MODULE FLU:        : TIME SPENT=        0.000 MEMORY USAGE= 0.000E+00
+-->>MODULE FLU:        : TIME SPENT=        0.001 MEMORY USAGE= 0.000E+00
 ->@BEGIN MODULE : GREP:       
 ->@DESCRIPTION  : No description available for this module                                
 ->@CREDITS      : No author provided for this module                                      
@@ -245,7 +245,7 @@ QUIT .                                                                          
                   GNU LESSER GENERAL PUBLIC LICENSE
 -->>module GREP:       : time spent=        0.000 memory usage= 0.000E+00
 ->@END MODULE   : GREP:       
->|tracking = SYBILT, CP solution Keff=  1.171623e+00                                                                      |>0050
+>|tracking = SYBILT, CP solution Keff=  1.171624e+00                                                                      |>0050
 . ------------------------------------------------------------------------------------------------------------------------ .
 
  normal end of execution for dragon 5  Version 5.0.10 ($Revision: 3196 $)              

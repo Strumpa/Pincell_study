@@ -4,6 +4,7 @@ function phi=mcgsis(phi,q,track,sigt,sigw,pii,nmu,beta)
 % (c) 2009 Alain Hebert, Ecole Polytechnique de Montreal
   nsurf=track(1) ; nreg=track(2) ; nbtr=track(4) ;
   s=q+phi.*[beta.*ones(1,nsurf) sigw]' ;
+  disp([beta.*ones(1,nsurf) sigw]') ;       
   [zmu,wzmu]=lmcd(nmu) ;
   %----
   %  flux calculation
@@ -36,12 +37,4 @@ for iline=1:nbtr
 end
 phi=phi./volsur ;
 unk=phi(nsurf+1:nsurf+nreg)+pii.*q(nsurf+1:nsurf+nreg) ;
-disp("pii times q is :") ;
-disp(pii.*q(nsurf+1:nsurf+nreg))
-disp("phi:") ;
-disp(phi(nsurf+1:nsurf+nreg)) ;
-disp("unk:") ;
-disp(unk) ;
-disp("denominator:") ;
-disp((ones(nreg,1)-pii.*sigw')) ;
 phi(nsurf+1:nsurf+nreg)=unk./(ones(nreg,1)-pii.*sigw') ; 

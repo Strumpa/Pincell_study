@@ -41,13 +41,13 @@ GEOM := GEO: :: CARCEL 4
 ;
 
 * Parameters and tracking with NXT:
-INTEGER an2d := 100 ;  ! ANGULAR QUADRATURE PARAMETER 100 
-REAL densur := 500.0 ; ! DENSITY OF INTEGRATION LINES CM^-1 500.0
+INTEGER an2d := 320 ;  ! ANGULAR QUADRATURE PARAMETER 100, for 2D isotropic, any number of angles can be used. 
+REAL densur := 80.0 ; ! DENSITY OF INTEGRATION LINES CM^-1 500.0
 ! Need good spatial convergence to get results close to SYBILT.
 
 TRACK_N TF_EXC := NXT: GEOM ::
   EDIT 10
-  TISO EQW <<an2d>> <<densur>> 
+  TISO EQW <<an2d>> <<densur>>
 ;
 SYS := ASM: MACRO TRACK_N TF_EXC :: PIJ EDIT 0 ; 
 FLUX := FLU: MACRO SYS TRACK_N TF_EXC :: 

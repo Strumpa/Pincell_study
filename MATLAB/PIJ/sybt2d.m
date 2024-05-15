@@ -140,7 +140,7 @@ function track=sybt2d(a,rad,nangle,ngauss)
     track_w(k+1)=na2+track_w(k+1) ; nseg=track_w(k+5) ;
     if track_w(k+3) == 2
       track_w(k+2)=4 ; track_w(k+3)=3 ;
-    elseif track_w(k+3) == 4 ;
+    elseif track_w(k+3) == 4 
       track_w(k+3)=3 ;
     end
     track_w(k+6+nseg:k+5+2*nseg)=track_w(k+5+2*nseg:-1:k+6+nseg) ;

@@ -53,8 +53,8 @@ t_ab = zeros(nsurf, nsurf) ;  % S_a*(P_SaSb) / 4, eq. 3.339
 P_SS = zeros(nsurf, nsurf) ; % = t_ab * 4/S_a, here S_a = side for all a since it's a square pincell.
 
 % Entrance components
-t_ib = zeros(nvol, nsurf) ; % Vi*P_iSb, eq 3.339
-P_vS = zeros(nvol, nsurf) ; % = t_ib/Vi
+%t_ib = zeros(nvol, nsurf) ; % Vi*P_iSb, eq 3.339
+p_Sv = zeros(nvol, nsurf) ; % = t_ib*4/S
  
 % collision components
 t_ij = zeros(nvol, nvol) ; % Vi*p_ij, eq 3.339 ! Reduced p_ij here !
@@ -78,10 +78,10 @@ P_SS(diag_indices_surf | upper_diag_indices_surf) = Tij(1:n_SS)*4/side ;
 pss = sybpss(tracks, sig_tot) ;
 
 % Store elements in P_vS
-t_ib (:) = Tij(n_SS+1:n_IJ_start-1) ;
+t_ib = Tij(n_SS+1:n_IJ_start-1) ;
 %P_vS = t_ib/Vi
 for i=1:nvol
-    P_vS(i,:) = t_ib(i,:) / Vol_i(i) ;
+    p_Sv(i,:) = t_ib(i,:) ;
 end
 
 % Store elements in P_ij upper diagonal including diagonal

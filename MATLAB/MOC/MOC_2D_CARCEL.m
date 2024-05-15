@@ -1,6 +1,6 @@
 % Question 2, Pre-Doctoral Exam : 
 % Method of Characteristics solution to 2D Pincell neutron flux.
-% Author : R. Guasch, combining and adapting scripts written by A. Hébert.
+% Author : R. Guasch, combining and adapting scripts written by A. Hebert.
 % available at https://https://moodle.polymtl.ca/course/view.php?id=1233
 side = sqrt(4.9) ; %cm
 nangle = 14 ; %number of angles
@@ -38,7 +38,8 @@ for i=2:size(Vol_i,2)-1
 end
 % 1) Generate tracking file :
 tracks = sybt2d(side,radii,nangle,ngauss) ; % calling sybt2d to generate tracking file
-
+% 2) compute Pii : self-collision factors
 pii = mcgpii(tracks, sig_tot, nmu) ;
 
-Phi = free(phi,q,"mcgsis",errtol,maxit,tracks,sig_tot,sig_scattering,pii,nmu,beta) ;
+% 3) iterate over Phi until convergence
+[Phi, error, iter,Keff ] = free(phi,q,"mcgsis",errtol,maxit,tracks,sig_tot,sig_scattering,pii,nmu,beta) ;

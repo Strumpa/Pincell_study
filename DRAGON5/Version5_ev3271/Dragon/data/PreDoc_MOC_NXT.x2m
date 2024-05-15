@@ -1,7 +1,7 @@
 * Cle2000 input deck for Pre-Doctoral wirtten exam question 4.
 * R. Guasch
 * Purpose : MOC calculation for pincell with given MACRO sections
-* Two appoaches : given MOC and isotropic BC, use NXT TISO.
+* Given MOC and isotropic BC, use NXT TISO.
 
 MODULE 
     GEO: MAC: NXT: MCCGT: ASM: FLU: GREP: ;
@@ -40,9 +40,9 @@ GEOM := GEO: :: CARCEL 4
 ;
 
 * Parameters and tracking with NXT:
-INTEGER an2d := 100 ;  ! ANGULAR QUADRATURE PARAMETER 100 
-REAL densur := 500.0 ; ! DENSITY OF INTEGRATION LINES CM^-1 500.0
-INTEGER nmu := 2 ; ! POLAR ANGLE QUADRATURE ORDER FOR MCCGT, test values 2, 3, 4.
+INTEGER an2d := 20 ;  ! ANGULAR QUADRATURE PARAMETER 
+REAL densur := 640.0 ; ! DENSITY OF INTEGRATION LINES CM^-1 
+INTEGER nmu := 24 ; ! POLAR ANGLE QUADRATURE ORDER FOR MCCGT, test values 2, 3, 4.
 
 INTEGER mcu := 500 ; !  memory size allocation for MCCGT:
 
@@ -53,7 +53,7 @@ TRACK_N TF_EXC := NXT: GEOM ::
 
 TRACK_N := MCCGT: TRACK_N TF_EXC ::
   EDIT 10
-  LCMD <<nmu>> MCU <<mcu>> EPSI 1E-7 ! Using LCMD for Leonard McDaniel quadrature points and weights
+  CACB <<nmu>> MCU <<mcu>> EPSI 1E-7 ! Using LCMD for Leonard McDaniel quadrature points and weights
 ;
 
 SYS := ASM: MACRO TRACK_N TF_EXC :: ARM EDIT 10 ; 

@@ -1,4 +1,4 @@
-function [x, error, iter] = free(x, b, atv, errtol, maxit, varargin)
+function [x, error, iter, Keff] = free(x, b, atv, errtol, maxit, varargin)
 % free-iteration linear equation solver
 % function [x, error, total_iters] = free(x0, b, atv, errtol, maxit, varargin)
 % input parameters:
@@ -18,9 +18,16 @@ function [x, error, iter] = free(x, b, atv, errtol, maxit, varargin)
   errtol=errtol*norm(b);
   rho=Inf; error=[ ];
   iter=0;
+  eval_ini = 1 ;
+  Fission_integral = b(5)*x(5) ;
   while((rho > errtol) && (iter < maxit))
     iter=iter+1;
     r=feval(atv,x,b,varargin{:})-x;
     rho=norm(r); error=[error;rho];
     x=x+r;
+    new_Fission_integral = b(5)*x(5) ;
+    new_eval = eval_ini*(Fission_integral/new_Fission_integral) ;
+    eval_ini = new_eval ;
+    Fission_integral = new_Fission_integral ;
   end
+  Keff = 1/eval_ini ;
