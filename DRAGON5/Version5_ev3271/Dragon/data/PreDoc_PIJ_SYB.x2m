@@ -40,17 +40,18 @@ GEOM := GEO: :: CARCEL 4
 ;
 
 * Parameters and tracking with SYBILT:
-INTEGER iqua2 := 32 ; ! test 7, 14, 28, 32, 64 causes seg fault, even with nseg = 1.
-INTEGER nseg := 10    ; ! test 2, 4, 8, 10
+INTEGER iqua2 := 14 ; ! test 7, 14, 28, 32, 64
+INTEGER nseg := 4    ; ! test 2, 4, 8, 10, causes seg fault, even with nseg = 10.
 TRACK_S := SYBILT: GEOM ::
+    EDIT 100
     MAXR 200
     MAXZ 20000000
     TITLE 'TRACKING FOR PINCELL'
     QUA2 <<iqua2>> <<nseg>> GAUS 
 ;
-SYS := ASM: MACRO TRACK_S :: PIJ EDIT 0 ; 
+SYS := ASM: MACRO TRACK_S :: PIJ EDIT 10 ; 
 FLUX := FLU: MACRO SYS TRACK_S :: 
-        EDIT 1 TYPE K ;
+        EDIT 10 TYPE K ;
 
 GREP: FLUX :: GETVAL 'K-EFFECTIVE' 1 1 1  >>Keff1<< ;
 ECHO "tracking = SYBILT, CP solution Keff=" Keff1 ;

@@ -36,19 +36,20 @@ MIX 1 2 3 4 5                                                                   
 MESHX 0.0 <<pitch>> MESHY 0.0 <<pitch>>                                                                                    0035
 ;                                                                                                                          0036
 * Parameters and tracking with SYBILT:                                                                                     0037
-INTEGER iqua2 := 32 ; ! test 7, 14, 28, 32, 64 causes seg fault, even with nseg = 1.                                       0038
-INTEGER nseg := 10    ; ! test 2, 4, 8, 10                                                                                 0039
+INTEGER iqua2 := 14 ; ! test 7, 14, 28, 32, 64 causes seg fault, even with nseg = 1.                                       0038
+INTEGER nseg := 4    ; ! test 2, 4, 8, 10                                                                                  0039
 TRACK_S := SYBILT: GEOM ::                                                                                                 0040
-MAXR 200                                                                                                                   0041
-MAXZ 20000000                                                                                                              0042
-TITLE 'TRACKING FOR PINCELL'                                                                                               0043
-QUA2 <<iqua2>> <<nseg>> GAUS                                                                                               0044
-;                                                                                                                          0045
-SYS := ASM: MACRO TRACK_S :: PIJ EDIT 0 ;                                                                                  0046
-FLUX := FLU: MACRO SYS TRACK_S ::                                                                                          0047
-EDIT 1 TYPE K ;                                                                                                            0048
-GREP: FLUX :: GETVAL 'K-EFFECTIVE' 1 1 1  >>Keff1<< ;                                                                      0049
-ECHO "tracking = SYBILT, CP solution Keff=" Keff1 ;                                                                        0050
+EDIT 100                                                                                                                   0041
+MAXR 200                                                                                                                   0042
+MAXZ 20000000                                                                                                              0043
+TITLE 'TRACKING FOR PINCELL'                                                                                               0044
+QUA2 <<iqua2>> <<nseg>> GAUS                                                                                               0045
+;                                                                                                                          0046
+SYS := ASM: MACRO TRACK_S :: PIJ EDIT 10 ;                                                                                 0047
+FLUX := FLU: MACRO SYS TRACK_S ::                                                                                          0048
+EDIT 10 TYPE K ;                                                                                                           0049
+GREP: FLUX :: GETVAL 'K-EFFECTIVE' 1 1 1  >>Keff1<< ;                                                                      0050
+ECHO "tracking = SYBILT, CP solution Keff=" Keff1 ;                                                                        0051
 QUIT .                                                                                                                  IMPLICIT
  
  DDDDDD   RRRRRR     AAA     GGGGG    OOOOO   NN     NN
@@ -106,7 +107,7 @@ QUIT .                                                                          
  IDF        0   (=0/2 BOUNDARY FLUXES FOR ADF ABSENT/PRESENT)
  NPART0     0   (NUMBER OF COMPANION PARTICLES)
 ->@END MODULE   : MAC:        
--->>MODULE MAC:        : TIME SPENT=        0.000 MEMORY USAGE= 2.000E+03
+-->>MODULE MAC:        : TIME SPENT=        0.001 MEMORY USAGE= 0.000E+00
 ->@BEGIN MODULE : GEO:        
 ->@DESCRIPTION  : Geometry definition                                                     
 ->@CREDITS      : A. Hebert                                                               
@@ -121,6 +122,18 @@ QUIT .                                                                          
 ->@CREDITS      : A. Hebert                                                               
 ->@COPYRIGHTS   : ECOLE POLYTECHNIQUE DE MONTREAL  
                   GNU LESSER GENERAL PUBLIC LICENSE
+1 SSSSS  YY  YY  BBBBBB  IIIIII LL             1 ***********************************************************************************
+ SSSSSSS YY  YY  BBBBBBB IIIIII LL            11 ********************************************* MULTIGROUP VERSION.  A. HEBERT (1987)
+ SS   SS YY  YY  BB   BB   II   LL           111
+  SSS     Y  Y   BBBBBB    II   LL      ===   11
+    SSS    YY    BBBBBB    II   LL      ===   11
+ SS   SS   YY    BB   BB   II   LL            11
+ SSSSSSS   YY    BBBBBBB IIIIII LLLLLLL     111111
+  SSSSS    YY    BBBBBB  IIIIII LLLLLLL     111111
+
+ TRACKING FOR PINCELL                                                    
+
+
 
  CARTESIAN MULTICELL OPTION (EURYDICE-2) BASED ON GEOMETRY LOCATED IN 'GEOM        '.
 
@@ -143,14 +156,27 @@ QUIT .                                                                          
  DP-0 APPROXIMATION AROUND EACH CARTESIAN CELL.
 
  QUADRATURE PARAMETERS:
- HETEROGENEOUS CELLS   -    ANGLES   NA = 32 IN (0,PI/4)
-                          SEGMENTS   NX = 10
+ HETEROGENEOUS CELLS   -    ANGLES   NA = 14 IN (0,PI/4)
+                          SEGMENTS   NX =  4
 
  HOMOGENEOUS CELLS     -    ANGLES   NH =  5
 
  CYLINDRICAL CELLS     -  SEGMENTS   MR =  5
 
 
+
+
+
+ SURFACE NUMBERS AFTER MERGING.
+
+ -----------------------------------------------------------------------
+ BLOCK=    1     MERGED BLOCK=    1     GENERATING BLOCK=    1
+
+   SIDE:       X-      I       X+      I       Y-      I       Y+      I
+ IN/OUT:     1 /    1  I     2 /    2  I     3 /    3  I     4 /    4  I
+ ALBEDO:  1.00000E+00  I  1.00000E+00  I  1.00000E+00  I  1.00000E+00  I
+    DVX:  1.00000E+00  I  1.00000E+00  I  1.00000E+00  I  1.00000E+00  I
+ -----------------------------------------------------------------------
 
  TOTAL NUMBER OF CELLS IN THE DOMAIN =      1
  TOTAL NUMBER OF MERGED CELLS =      1
@@ -161,14 +187,21 @@ QUIT .                                                                          
  TOTAL NUMBER OF OUT-CURRENTS SURROUNDING ALL THE CELLS =      4     AVAILABLE STORAGE MAXJ =    800
 
 
- SYBEUR: MAXIMUM STORAGE REQUIRED BY THE TRACKS =    5124 +  39076        AVAILABLE STORAGE MAXZ =20000000
+ SYBEUR: MAXIMUM STORAGE REQUIRED BY THE TRACKS =    2244 +   7072        AVAILABLE STORAGE MAXZ =20000000
 
 
- SYBEUR: EXACT STORAGE REQUIRED BY THE TRACKS =   1870 INT +  12205 REAL        ACCURACY =  3.733E-06
+ SYBEUR: EXACT STORAGE REQUIRED BY THE TRACKS =    820 INT +   2293 REAL        ACCURACY =  3.706E-06
 
 
  NUMBER OF VOLUMES =      5     AVAILABLE STORAGE MAXBLK =    200
 
+
+
+
+ REGION           1      I       2      I       3      I       4      I       5      I
+ MIXTURE          1      I       2      I       3      I       4      I       5      I
+ POINTER          1      I       2      I       3      I       4      I       5      I
+ VOLUME     4.000004E-01 I 6.999996E-01 I 3.999987E-01 I 1.300003E+00 I 2.099999E+00 I
 
  STATE VECTOR:
  NREG        5   (NUMBER OF REGIONS)
@@ -183,14 +216,120 @@ QUIT .                                                                          
  IBIHET      0   (0/1=DOUBLE HETEROGENEITY IS NOT/IS ACTIVE)
  EPSJ   5.00E-06 (FLUX-CURRENT ITERATION EPSILON)
 ->@END MODULE   : SYBILT:     
--->>MODULE SYBILT:     : TIME SPENT=        0.000 MEMORY USAGE= 1.736E+03
+-->>MODULE SYBILT:     : TIME SPENT=        0.000 MEMORY USAGE= 1.916E+03
 ->@BEGIN MODULE : ASM:        
 ->@DESCRIPTION  : To built system matrices (CP and IC)                                    
 ->@CREDITS      : A. Hebert, G. Marleau, R. Roy                                           
 ->@COPYRIGHTS   : ECOLE POLYTECHNIQUE DE MONTREAL  
                   GNU LESSER GENERAL PUBLIC LICENSE
+
+
+ COMPUTATION OF DRAGON COMPLETE CP BY DOOR =   SYBIL       
+
+
+                               EDITION REGION/VOLUME/MIXTURE 
+
+     REGION     VOLUME       MIXTURE     REGION     VOLUME       MIXTURE     REGION     VOLUME       MIXTURE
+
+        1     4.00000E-01       1            2     7.00000E-01       2            3     3.99999E-01       3
+        4     1.30000E+00       4            5     2.10000E+00       5
+
+
+                               G R O U P :     1
+
+                               TOTAL AND WITHIN-GROUP MACROSCOPIC CROSS SECTIONS PER MIXTURE 
+
+ MIXTURE    NTOT0           SIGW    MIXTURE    NTOT0           SIGW    MIXTURE    NTOT0           SIGW
+    1    2.00000E-01    5.00000E-02    2    0.00000E+00    0.00000E+00    3    5.00000E-01    5.00000E-02
+    4    0.00000E+00    0.00000E+00    5    3.00000E-01    5.00000E-02
+
+ SYBRHL: NORMALIZATION FACTORS
+ ITER.     MU      ERROR 
+  1  1.00000  0.8642748E-05
+  2  1.00000  0.2384181E-06
+1
+
+ GENERATING CELL NB   1
+
+ TOTAL MACROSCOPIC CROSS SECTIONS :
+
+   2.00000E-01  1.00000E-10  5.00000E-01  1.00000E-10  3.00000E-01
+
+
+ P(I,J) MATRIX :
+
+   4.24739E-01  3.51975E-01  1.32032E-01  3.13267E-01  3.30561E-01
+   2.01129E-01  4.73903E-01  1.70612E-01  3.57964E-01  3.57040E-01
+   1.32033E-01  2.98572E-01  2.24023E-01  4.05351E-01  3.67072E-01
+   9.63896E-02  1.92749E-01  1.24723E-01  5.42646E-01  4.49334E-01
+   6.29640E-02  1.19013E-01  6.99182E-02  2.78160E-01  5.52395E-01
+
+
+ PIS(I) MATRIX :
+
+   1.87467E-01  1.87467E-01  1.87467E-01  1.87467E-01
+   1.91839E-01  1.91839E-01  1.91839E-01  1.91839E-01
+   1.87865E-01  1.87865E-01  1.87865E-01  1.87865E-01
+   1.95890E-01  1.95890E-01  1.95890E-01  1.95890E-01
+   1.96682E-01  1.96682E-01  1.96682E-01  1.96682E-01
+
+
+ PSS MATRIX :
+
+   0.00000E+00  2.55300E-01  2.12899E-01  2.12899E-01
+   2.55300E-01  0.00000E+00  2.12899E-01  2.12899E-01
+   2.12899E-01  2.12899E-01  0.00000E+00  2.55300E-01
+   2.12899E-01  2.12899E-01  2.55300E-01  0.00000E+00
+
+
+
+
+
+ SYBCP1: SCATTERING-REDUCED COLLISION PROBABILITY MATRIX :
+
+           J=   1     J=   2     J=   3     J=   4     J=   5
+ I=   1:   8.369E-01  1.075E+00  5.361E-01  1.673E+00  2.533E+00
+ I=   2:   6.145E-01  1.204E+00  5.794E-01  1.734E+00  2.588E+00
+ I=   3:   5.361E-01  1.014E+00  6.248E-01  1.754E+00  2.554E+00
+ I=   4:   5.147E-01  9.338E-01  5.397E-01  1.942E+00  2.720E+00
+ I=   5:   4.825E-01  8.628E-01  4.864E-01  1.684E+00  2.835E+00
+
+
+
+
+
+ LCMLIB: CONTENT OF ACTIVE DIRECTORY '/           ' OF THE TABLE    'SYS         ':
+
+     BLOCK NAME----------    LENGTH    TYPE
+
+        1  'SIGNATURE   '         3    CHARACTER       ='L_PIJ       '
+        2  'LINK.MACRO  '         3    CHARACTER       ='MACRO       '
+        3  'LINK.TRACK  '         3    CHARACTER       ='TRACK_S     '
+        4  'STATE-VECTOR'        40    INTEGER         
+        5  'GROUP       '         1    LIST            
+
+
+ TOTAL NUMBER OF WORDS ON DIRECTORY '/           ' =        49
+
+
+ OPTIONS
+ -------
+ IMPX        10   (0=NO PRINT/1=SHORT/2=MORE)
+ ITPIJ        1   (1=WIJ/2=PIJ/3=WIJK/4=PIJK)
+ LNORM        1   (0=NORMALIZE PIJ TO 1/1=DO NOT)
+ LALBS        1   (0=RECOVER AND SAVE WIS/1=DO NOT)
+ IPHASE       2   (1=GENERAL FLUX SOLUTION/2=PIJ APPROACH)
+ ISTRM        1   (1=HOMO BN OR NO LEAKAGE/2=ECCO/3=TIBERE)
+ KNORM        4   (0=NO/1=GELBARD/2=DIAGONAL/3=NON-LINEAR/4=HELIOS)
+ NGRP         1   (NUMBER OF GROUPS)
+ NUN          5   (NUMBER OF UNKNOWNS)
+ NBMIX        5   (NUMBER OF MIXTURES)
+ NANI         1   (NUMBER OF LEGENDRE ORDERS SCATTERING XS)
+ IDIFF        0   (0/1: DIFFUSION COEFFICIENTS ABSENT/PRESENT)
+ IBFP         0   (0/1/2: FOKKER-PLANCK SOLUTION OFF/ON/ON)
+ DOOR             (SYBIL       )
 ->@END MODULE   : ASM:        
--->>MODULE ASM:        : TIME SPENT=        0.003 MEMORY USAGE= 0.000E+00
+-->>MODULE ASM:        : TIME SPENT=        0.001 MEMORY USAGE= 0.000E+00
 ->@BEGIN MODULE : FLU:        
 ->@DESCRIPTION  : Solve the flux equations                                                
 ->@CREDITS      : R. Roy, A. Hebert, G. Marleau                                           
@@ -220,24 +359,113 @@ QUIT .                                                                          
  UNKNOWN OUTER TOLERANCE     =  5.000E-05
  UNKNOWN INNER TOLERANCE     =  5.000E-05
 
+
+
+                               EDITION REGION/VOL/MIXTURE 
+
+     REGION     VOL       MIXTURE     REGION     VOL       MIXTURE     REGION     VOL       MIXTURE
+
+        1     4.00000E-01       1            2     7.00000E-01       2            3     3.99999E-01       3
+        4     1.30000E+00       4            5     2.10000E+00       5
+
+
+                               G R O U P :     1
+
+                               TOTAL MACROSCOPIC CROSS SECTIONS PER MIXTURE 
+
+ MIXTURE    NTOT0           SIGW    MIXTURE    NTOT0           SIGW    MIXTURE    NTOT0           SIGW
+    1    2.00000E-01    5.00000E-02    2    0.00000E+00    0.00000E+00    3    5.00000E-01    5.00000E-02
+    4    0.00000E+00    0.00000E+00    5    3.00000E-01    5.00000E-02
+ MIXTURE    NUSIGF           CHI     MIXTURE    NUSIGF           CHI     MIXTURE    NUSIGF           CHI 
+    1    1.40000E+00    1.00000E+00    2    0.00000E+00    0.00000E+00    3    0.00000E+00    0.00000E+00
+    4    0.00000E+00    0.00000E+00    5    0.00000E+00    0.00000E+00
+
+  ************ OLDBIL=  0.76499917447565580     
+  ************ PROD  =  0.56000054121016518     
+  ************ LOSS  =  0.76499917447565569     
+  ************ AFLNOR=   1.3660686341882582     
+  ************ AKEFF =  0.73202764119843622     
+
  OUT(  0) EIG: PRC= 1.00E+00 TAR= 1.00E-05 KEFF= 7.320276E-01 BUCK= 0.00000E+00
+
+
+ DOORFV: **TRAFIC      ** TRACKING FOR PINCELL                                                    
+
+ N E U T R O N    S O U R C E S (    1 ):    F L U X  
+       1.9124961E+00       0.0000000E+00       0.0000000E+00       0.0000000E+00       0.0000000E+00
+
+
+ TRFICF: TRACKING FOR PINCELL                                                    
+
+ TRFICF: PROCESSING GROUP    1 WITH TRAFIC.
+
+ U N K N O W N    F L U X E S (    1 ):      F L U X  
+       1.6005139E+00       1.1752422E+00       1.0252471E+00       9.8427522E-01       9.2271364E-01
           IN(  1) FLX: PRC= 3.75E-01 TAR= 5.00E-05 IGDEB=            1 ACCE=     1.00000
+
+
+ DOORFV: **TRAFIC      ** TRACKING FOR PINCELL                                                    
+
+ N E U T R O N    S O U R C E S (    1 ):    F L U X  
+       1.9124961E+00       0.0000000E+00       0.0000000E+00       0.0000000E+00       0.0000000E+00
+
+
+ TRFICF: TRACKING FOR PINCELL                                                    
+
+ TRFICF: PROCESSING GROUP    1 WITH TRAFIC.
+
+ U N K N O W N    F L U X E S (    1 ):      F L U X  
+       1.6005139E+00       1.1752422E+00       1.0252471E+00       9.8427522E-01       9.2271364E-01
           IN(  2) FLX: PRC= 0.00E+00 TAR= 5.00E-05 IGDEB=            2 ACCE=     1.00000
  FLU2DR: NO LEAKAGE-> REBALANCING ON
  FLU2DR: CPU TIME=        0. INTERNAL CONVERGENCE       REACHED AFTER     2 ITERATIONS.
- OUT(  1) EIG: PRC= 3.75E-01 TAR= 1.00E-05 KEFF= 1.171624E+00 BUCK= 0.00000E+00
- OUT(  1) FLX:                             FNOR= 8.535160E-01 ACCE=     1.00000
+
+  ************ OLDBIL=  0.76499925968348048     
+  ************ PROD  =  0.89628879956904950     
+  ************ LOSS  =  0.76499925968348048     
+  ************ AFLNOR=  0.85351870965173815     
+  ************ AKEFF =   1.1716204796588827     
+
+ OUT(  1) EIG: PRC= 3.75E-01 TAR= 1.00E-05 KEFF= 1.171620E+00 BUCK= 0.00000E+00
+ OUT(  1) FLX:                             FNOR= 8.535187E-01 ACCE=     1.00000
+
+
+ DOORFV: **TRAFIC      ** TRACKING FOR PINCELL                                                    
+
+ N E U T R O N    S O U R C E S (    1 ):    F L U X  
+       1.9124962E+00       0.0000000E+00       0.0000000E+00       0.0000000E+00       0.0000000E+00
+
+
+ TRFICF: TRACKING FOR PINCELL                                                    
+
+ TRFICF: PROCESSING GROUP    1 WITH TRAFIC.
+
+ U N K N O W N    F L U X E S (    1 ):      F L U X  
+       1.6005141E+00       1.1752422E+00       1.0252472E+00       9.8427528E-01       9.2271370E-01
           IN(  1) FLX: PRC= 7.45E-08 TAR= 5.00E-05 IGDEB=            2 ACCE=     1.00000
  FLU2DR: NO LEAKAGE-> REBALANCING ON
  FLU2DR: CPU TIME=        0. INTERNAL CONVERGENCE       REACHED AFTER     1 ITERATIONS.
- OUT(  2) EIG: PRC= 1.07E-08 TAR= 1.00E-05 KEFF= 1.171624E+00 BUCK= 0.00000E+00
- OUT(  2) FLX: PRC= 7.45E-08 TAR= 5.00E-05 FNOR= 8.535160E-01 ACCE=     1.00000
+
+  ************ OLDBIL=  0.76499923509656298     
+  ************ PROD  =  0.89628870420152396     
+  ************ LOSS  =  0.76499923509656309     
+  ************ AFLNOR=  0.85351877303650425     
+  ************ AKEFF =   1.1716203926509661     
+
+ OUT(  2) EIG: PRC= 7.43E-08 TAR= 1.00E-05 KEFF= 1.171620E+00 BUCK= 0.00000E+00
+ OUT(  2) FLX: PRC= 7.45E-08 TAR= 5.00E-05 FNOR= 8.535188E-01 ACCE=     1.00000
+
+ FLUXES AVERAGED           :
+         /=   1      /=   2      /=   3      /=   4      /=   5
+
+ ENERGY GROUP      1
+ FLUX  :  1.36607E+00 1.00309E+00 8.75068E-01 8.40097E-01 7.87553E-01
  FLU2DR: CPU TIME=        0. EXTERNAL CONVERGENCE       REACHED AFTER     2 ITERATIONS.
 
- ++ TRACKING CALLED=   3 TIMES FINAL KINF= 1.171624E+00 FINAL KEFF= 1.171624E+00 B2= 0.00000E+00 PRECISION= 1.07E-08
+ ++ TRACKING CALLED=   3 TIMES FINAL KINF= 1.171620E+00 FINAL KEFF= 1.171620E+00 B2= 0.00000E+00 PRECISION= 7.43E-08
  ++ TOTAL NUMBER OF FLUX CALCULATIONS=         3
 ->@END MODULE   : FLU:        
--->>MODULE FLU:        : TIME SPENT=        0.001 MEMORY USAGE= 0.000E+00
+-->>MODULE FLU:        : TIME SPENT=        0.000 MEMORY USAGE= 0.000E+00
 ->@BEGIN MODULE : GREP:       
 ->@DESCRIPTION  : No description available for this module                                
 ->@CREDITS      : No author provided for this module                                      
@@ -245,7 +473,7 @@ QUIT .                                                                          
                   GNU LESSER GENERAL PUBLIC LICENSE
 -->>module GREP:       : time spent=        0.000 memory usage= 0.000E+00
 ->@END MODULE   : GREP:       
->|tracking = SYBILT, CP solution Keff=  1.171624e+00                                                                      |>0050
+>|tracking = SYBILT, CP solution Keff=  1.171620e+00                                                                      |>0051
 . ------------------------------------------------------------------------------------------------------------------------ .
 
  normal end of execution for dragon 5  Version 5.0.10 ($Revision: 3196 $)              
