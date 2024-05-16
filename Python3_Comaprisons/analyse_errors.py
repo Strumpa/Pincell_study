@@ -9,6 +9,9 @@ import matplotlib.cm as cm
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import BoundaryNorm
 
+##-------------------------------------------------------------- Function definitions ---------------------------------------------------------##
+
+#---------------------------------------------------------- Reactivity error/difference analysis -----------------------------------------------#
 # Define the relative error function
 def error_reactiv(Keffs, Keff_ref):
     """
@@ -51,59 +54,7 @@ def plot_error_matrix_SYBILT(errors_matrix, angular_quadrature_points, number_of
     plt.savefig('errors_matrix_SYBT_CP.png')
     plt.show()
 
-
-densur = [80, 160, 320, 640, 1280] # lines densities
-nangle = [10, 20, 40, 80, 160, 320, 640] # number of equidistant angles in [0, pi/2)
-NXT_Cp_Keffs = [[1.172364, 1.171430, 1.171299, 1.171542, 1.171460, 1.171481, 1.171451],
-                [1.171676, 1.171540, 1.171481, 1.171528, 1.171350, 1.171490, 1.171480],
-                [1.171739, 1.171522, 1.171466, 1.171492, 1.171524, 1.171469, 1.171489],
-                [1.171930, 1.171672, 1.171636, 1.171622, 1.171628, 1.171606, 1.171597],
-                [1.172009, 1.171690, 1.171674, 1.171670, 1.171669, 1.171658, 1.171661]] # lines are densur, columns are nangle 
-
-PIJ_MATLAB_Keff = 1.171658
-
-errors_matrix = [error_reactiv(NXT_Cp_Keffs[i], PIJ_MATLAB_Keff) for i in range(len(densur))]
-print(errors_matrix[3][2])
-errors_matrix = np.array(errors_matrix)
-
-# plot 2d map of error matrix where x-axis is densur and y-axis is nangle
-    
-#plot_error_matrix_NXT(errors_matrix, densur, nangle, 'CP')
-
-
-# SYBILT CP
-
-iqua2 = [7, 14, 28, 32]
-nseg = [2, 4, 8, 10]
-SYBILT_Cp_Keffs = [[1.172514, 1.172548, 1.172554, 1.172567], # rows are nseg, columns are iqua2
-                   [1.171676, 1.171620, 1.171622, 1.171627],  
-                   [1.171677, 1.171622, 1.171623, 1.171622], 
-                   [1.171677, 1.171623, 1.171624, 1.171624]]
-
-errors_matrix_SYB = [error_reactiv(SYBILT_Cp_Keffs[i], PIJ_MATLAB_Keff) for i in range(len(nseg))]
-print(errors_matrix_SYB)
-#plot_error_matrix_SYBILT(errors_matrix_SYB, iqua2, nseg)
-
-# NXT + MCCGT : MOC
-MOC_MATLAB_Keff = 1.17161863 
-NXT_MOC_nmu4_Keffs =[[1.171366, 1.171391, 1.171420, 1.171423, 1.171421, 1.171422, 1.171422],
-                  [1.171396, 1.171422, 1.171443, 1.171450, 1.171451, 1.171451, 1.171452], 
-                  [1.171422, 1.171445, 1.171469, 1.171476, 1.171477, 1.171477, 1.171477], 
-                  [1.171551, 1.171574, 1.171599, 1.171605, 1.171606, 1.171606, 1.171606], 
-                  [1.171600, 1.171623, 1.171647, 1.171653, 1.171654, 1.171655, 1.171655]] 
-
-errors_matrix_NXT_MOC = [error_reactiv(NXT_MOC_nmu4_Keffs[i], MOC_MATLAB_Keff) for i in range(len(densur))]
-print(errors_matrix_NXT_MOC[3][1])
-print(errors_matrix_NXT_MOC[3][2])
-#plot_error_matrix_NXT(errors_matrix_NXT_MOC, densur, nangle, 'MOC')
-
-
-# nmu, quadrature orders
-MOC_MATLAB_KEFF = {"2": 1.16461143, "3": 1.17094507, "4": 1.17161863}
-LCMD_Keffs = {"2": 1.164567, "3": 1.170901, "4": 1.171574}
-CACB_Keffs = {"2": 1.132414, "3": 1.145952, "4": 1.153416, "6": 1.161091, "8": 1.164802, "12": 1.168143, "16": 1.169534, "32": 1.171025}
-GAUS_Keffs = {"2": 1.132016, "3": 1.147758, "4": 1.155658, "6": 1.163227, "8": 1.166649, "12": 1.169515, "16": 1.170582, "32": 1.171460}
-
+#---------------------------------------------------------- MOC quadrature order analysis -------------------------------------------------#
 
 def compute_error_order(MOC_MATLAB_KEFF, KEFFS, order_factor):
     errors = []
@@ -120,9 +71,6 @@ def compute_error_to_MATLAB_nmu4(MOC_MATLAB_KEFF, KEFFS):
         errors.append((1/MOC_MATLAB_KEFF-1/KEFFS[order])*1e5)
     return errors
 
-CACB_error = compute_error_to_MATLAB_nmu4(MOC_MATLAB_KEFF["4"], CACB_Keffs)
-GAUS_error = compute_error_to_MATLAB_nmu4(MOC_MATLAB_KEFF["4"], GAUS_Keffs)
-LCMD_error = compute_error_to_MATLAB_nmu4(MOC_MATLAB_KEFF["4"], LCMD_Keffs)
 
 def plot_error_order(orders_list, errors_list, quadrature_methods):
     fig, ax = plt.subplots()
@@ -137,6 +85,72 @@ def plot_error_order(orders_list, errors_list, quadrature_methods):
     ax.grid()
     plt.savefig(f'errors_order_LCMD_vs_CACB_GAUS.png')
     plt.show()
+
+#---------------------------------------------------------- End function definitions -------------------------------------------------------#
+
+
+#---------------------------------------------------------- Main ---------------------------------------------------------------------------#
+
+
+densur = [80, 160, 320, 640, 1280] # lines densities
+nangle = [10, 20, 40, 80, 160, 320, 640] # number of equidistant angles in [0, pi/2)
+NXT_Cp_Keffs = [[1.172364, 1.171430, 1.171299, 1.171542, 1.171460, 1.171481, 1.171451],
+                [1.171676, 1.171540, 1.171481, 1.171528, 1.171350, 1.171490, 1.171480],
+                [1.171739, 1.171522, 1.171466, 1.171492, 1.171524, 1.171469, 1.171489],
+                [1.171930, 1.171672, 1.171636, 1.171622, 1.171628, 1.171606, 1.171597],
+                [1.172009, 1.171690, 1.171674, 1.171670, 1.171669, 1.171658, 1.171661]] # lines are densur, columns are nangle 
+
+PIJ_MATLAB_Keff = 1.171670
+
+errors_matrix = [error_reactiv(NXT_Cp_Keffs[i], PIJ_MATLAB_Keff) for i in range(len(densur))]
+print(errors_matrix[3][2])
+errors_matrix = np.array(errors_matrix)
+
+# plot 2d map of error matrix where x-axis is densur and y-axis is nangle
+    
+plot_error_matrix_NXT(errors_matrix, densur, nangle, 'CP')
+
+
+# SYBILT CP
+
+iqua2 = [7, 14, 28, 32]
+nseg = [2, 4, 8, 10]
+SYBILT_Cp_Keffs = [[1.172514, 1.172548, 1.172554, 1.172567], # rows are nseg, columns are iqua2
+                   [1.171676, 1.171620, 1.171622, 1.171627],  
+                   [1.171677, 1.171622, 1.171623, 1.171622], 
+                   [1.171677, 1.171623, 1.171624, 1.171624]]
+
+errors_matrix_SYB = [error_reactiv(SYBILT_Cp_Keffs[i], PIJ_MATLAB_Keff) for i in range(len(nseg))]
+print(errors_matrix_SYB)
+plot_error_matrix_SYBILT(errors_matrix_SYB, iqua2, nseg)
+
+# NXT + MCCGT : MOC
+MOC_MATLAB_Keff = 1.17161863 
+NXT_MOC_nmu4_Keffs =[[1.171366, 1.171391, 1.171420, 1.171423, 1.171421, 1.171422, 1.171422],
+                  [1.171396, 1.171422, 1.171443, 1.171450, 1.171451, 1.171451, 1.171452], 
+                  [1.171422, 1.171445, 1.171469, 1.171476, 1.171477, 1.171477, 1.171477], 
+                  [1.171551, 1.171574, 1.171599, 1.171605, 1.171606, 1.171606, 1.171606], 
+                  [1.171600, 1.171623, 1.171647, 1.171653, 1.171654, 1.171655, 1.171655]] 
+
+errors_matrix_NXT_MOC = [error_reactiv(NXT_MOC_nmu4_Keffs[i], MOC_MATLAB_Keff) for i in range(len(densur))]
+print(errors_matrix_NXT_MOC[3][1])
+print(errors_matrix_NXT_MOC[3][2])
+plot_error_matrix_NXT(errors_matrix_NXT_MOC, densur, nangle, 'MOC')
+
+
+# nmu, quadrature orders
+MOC_MATLAB_KEFF = {"2": 1.16461143, "3": 1.17094507, "4": 1.17161863}
+LCMD_Keffs = {"2": 1.164567, "3": 1.170901, "4": 1.171574}
+CACB_Keffs = {"2": 1.132414, "3": 1.145952, "4": 1.153416, "6": 1.161091, "8": 1.164802, "12": 1.168143, "16": 1.169534, "32": 1.171025}
+GAUS_Keffs = {"2": 1.132016, "3": 1.147758, "4": 1.155658, "6": 1.163227, "8": 1.166649, "12": 1.169515, "16": 1.170582, "32": 1.171460}
+
+
+
+
+CACB_error = compute_error_to_MATLAB_nmu4(MOC_MATLAB_KEFF["4"], CACB_Keffs)
+GAUS_error = compute_error_to_MATLAB_nmu4(MOC_MATLAB_KEFF["4"], GAUS_Keffs)
+LCMD_error = compute_error_to_MATLAB_nmu4(MOC_MATLAB_KEFF["4"], LCMD_Keffs)
+
 
 LCMD_orders = [2, 3, 4]
 CACB_orders = [2, 3, 4, 6, 8, 12, 16, 32]

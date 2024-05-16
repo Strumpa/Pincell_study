@@ -51,13 +51,15 @@ Tij=sybrhl(tracks,sig_tot,Tij);
 % indpos function which associates Tij entry with upper diag
 % entries of full T matrix
 
-indices = index_mat_to_vec(nvol,nsurf) ; % indices return a 45 by 3 matrix which assocaites matrix indices to vector indices.
-
+indpos=@(i,j) max(i,j).*(max(i,j)-1)./2+min(i,j) ;
 T_matrix = zeros(nsurf+nvol,nsurf+nvol) ;
-for ind=1:size(Tij,2)
-    i = indices(ind,1) ;
-    j = indices(ind,2) ; 
-    T_matrix(i,j) = Tij(ind) ;
+
+for i=1:nsurf+nvol
+    for j=1:nsurf+nvol
+        if j>=i
+            T_matrix(i,j) = Tij(indpos(i,j)) ;
+        end
+    end
 end
 
 for indi=2:(nsurf+nvol)
@@ -68,7 +70,7 @@ end
 
 %check_symmetric = issymmetric(T_matrix) ;
 
-% decompose into sub-blocks : easier for me to think about it like this! 
+% decompose into sub-blocks. 
 
 t_SS = T_matrix(1:nsurf, 1:nsurf) ;
 t_Sv = T_matrix(1:nsurf, nsurf+1:nsurf+nvol) ;
@@ -84,9 +86,9 @@ for alpha=1:nsurf
     end
 end
 
-pss = sybpss(tracks, sig_tot) ; % compare with pss given by sybpss 
+%pss = sybpss(tracks, sig_tot) ; % compare with pss given by sybpss 
 % sybpss recovered from "Applied Reactor Physics" Appendix A. 
-% They're the same --> confident that so far, so good.
+% ---> They're the same.
 
 p_ij = zeros(nvol,nvol) ;
 
@@ -97,7 +99,7 @@ disp(p_ij) ;
 
 P_vS = zeros(nvol,nsurf);
 for i=1:nvol
-    P_vS(i,:) = t_vS(i,:)/Vol(i) ;
+    P_vS(i,:) = t_vS(i,:)/volumes(i) ;
 end
 
 p_Sv = zeros(nsurf,nvol) ;
@@ -129,20 +131,16 @@ end
 % 5) Compute the closed reduced collision probability matrix :
 % Use eq. 3.350 and 3.351
 
-%A = eye(nsurf)*albe ;
 PSS_tilde = albe.*inv(eye(nsurf,nsurf) -albe*P_SS) ; % eq 3.355
-
-%P_Sv = p_Sv.*sig_tot ;
 
 Pvv_tilde = p_ij + P_vS*PSS_tilde*p_Sv ; % eq 3.354
 
 % 6) Compute the scattering reduced probability matrix W
-%W=(eye(size(pwb,1))-pwb*S0)^-1*pwb*Qfiss;
 
-W = (eye(nvol,nvol)-Pvv_tilde*S0)\Pvv_tilde*Qfiss ;
+W = (eye(nvol,nvol)-Pvv_tilde*S0)\Pvv_tilde ;
 
 % 7) Compute 
-[iter,evect,eval] = al1eig(W,10^-8);
+[iter,evect,eval] = al1eig(W*Qfiss,10^-8);
 Keff=eval;
 disp("Keff = ");
 disp(Keff);
